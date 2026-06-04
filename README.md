@@ -1,70 +1,83 @@
-# Trabajo Final Integrador — Fixture del Mundial 2026 ⚽
+# ⚽ Fixture del Mundial 2026 — Real-Time Tracker
 
-Este es el proyecto del **Fixture del Mundial de fútbol 2026 en Tiempo Real** para la materia **Programación III** de la **Tecnicatura en Programación**.
-
-## 👤 Integrante
-- **Nombre:** Rodrigo Antunez
-- **Legajo:** 63788
+Un **Fixture Interactivo en Tiempo Real** para la Copa del Mundial de Fútbol 2026. Esta aplicación es una Single Page Application (SPA) premium de alto rendimiento diseñada para gestionar todo el transcurso del torneo, desde la fase de grupos hasta la gran final.
 
 ---
 
-## 🚀 Descripción del Proyecto
-La aplicación es una Single Page Application (SPA) que permite visualizar y actualizar de forma dinámica los resultados y estadísticas del Mundial de fútbol 2026. La app gestiona la progresión completa del torneo desde la fase de grupos hasta la gran final en tiempo real.
-
-### Características Principales:
-1. **Lista de Equipos**: Vista completa de las 32 selecciones del Mundial 2026 organizadas en un grid card premium con las banderas oficiales de cada país.
-2. **Fase de Grupos**: Tablas de posiciones interactivas que recalculan al instante (puntos, diferencia de gol, goles a favor, etc.) y aplican el orden oficial de desempate FIFA:
-   - Mayor cantidad de puntos.
-   - Mayor diferencia de goles.
-   - Mayor cantidad de goles a favor.
-   - Resultado del enfrentamiento directo.
-   - Orden alfabético como criterio de desempate por defecto.
-3. **Fase Eliminatoria (Playoffs)**: Bracket clásico en forma de árbol que conecta desde los Octavos de Final hasta la Final y Tercer Puesto. Los clasificados se definen y propagan de manera automática al completarse cada grupo.
-4. **Fixture Interactivo**: Carga rápida de marcadores con opción de registrar penales en caso de empate en playoffs.
-5. **Estadísticas de Goleadores y Asistidores**: Registro en tiempo real de los goleadores y asistidores de cada encuentro. Los tops se actualizan instantáneamente en la barra lateral.
-6. **Banderas Reales en Windows**: Integración nativa con [FlagCDN](https://flagcdn.com/) para renderizar imágenes reales de las banderas nacionales en formato PNG de alta calidad, solucionando el problema de falta de renderizado de emojis de banderas característico del sistema operativo Windows.
-7. **Conversión de Zona Horaria**: Los partidos están precargados en UTC y la aplicación convierte de manera automática la hora programada a la zona horaria del sistema local de quien visualiza el sitio (ej. GMT-3), mostrando explícitamente el desplazamiento horario.
-8. **Persistencia Local**: Uso de `LocalStorage` (bajo la clave `tfi_mundial_2026_state`) para garantizar la persistencia de todos los datos ingresados al actualizar o cerrar la pestaña.
-9. **Diseño Premium**: Interfaz oscura profesional tipo dashboard deportivo (estilo ESPN/FIFA) con fondo hexagonal, scorecard en tiempo real, navegación mobile con hamburger menu, y diseño 100% responsivo.
+<p align="center">
+  <img src="preview.png" alt="Fixture del Mundial 2026 Preview" width="100%" style="border-radius: 10px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);" />
+</p>
 
 ---
 
 ## 🛠️ Stack Tecnológico
-- **HTML5 Semántico**: Para una estructura robusta y accesible.
-- **CSS3 Vanilla**: Estilos personalizados, variables de diseño, sombras dinámicas y conectores del bracket de eliminación directa.
-- **JavaScript ES Modules (Vanilla)**: Lógica limpia y modular sin dependencias externas pesadas, permitiendo que la aplicación sea sumamente rápida.
-- **Vite (v5.x)**: Herramienta de construcción rápida y servidor de desarrollo para soporte nativo de módulos ES.
+
+A continuación se detallan las tecnologías clave utilizadas para construir este proyecto de forma limpia y moderna, sin dependencias pesadas:
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript (ES Modules)](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Windows Local Launch](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 
 ---
 
-## ⚙️ Guía de Ejecución Rápida en Windows
+## 👤 Información del Proyecto
 
+* **Materia:** Programación III
+* **Carrera:** Tecnicatura en Programación
+* **Alumno:** Rodrigo Antunez
+* **Legajo:** 63788
+
+---
+
+## ✨ Características Principales
+
+* 🏃‍♂️ **Lista de Equipos**: Vista interactiva de las 32 selecciones organizadas en una grilla premium con banderas reales.
+* 📊 **Fase de Grupos Dinámica**: Tablas de posiciones interactivas que recalculan instantáneamente los puntos, diferencia de gol, goles a favor y aplican de forma estricta los criterios oficiales de desempate de la FIFA.
+* 🏆 **Bracket de Fase Eliminatoria (Playoffs)**: Árbol interactivo que conecta desde octavos de final hasta la gran final (y tercer puesto), propagando ganadores automáticamente.
+* ✍️ **Fixture Interactivo con Penales**: Carga rápida de marcadores con soporte de penales en caso de empates en fases eliminatorias.
+* 👟 **Estadísticas de Goleadores y Asistidores**: Actualización instantánea en la barra lateral conforme se registran los eventos en cada partido.
+* 🌐 **Conversión Automática de Zona Horaria**: Los partidos se configuran en formato UTC y la aplicación los convierte dinámicamente a la zona horaria del usuario local.
+* 💾 **Persistencia con LocalStorage**: Todo el progreso del mundial y los datos ingresados se guardan de forma persistente en tu navegador.
+* 🎨 **Diseño Premium**: Interfaz oscura deportiva tipo dashboard con diseño totalmente responsivo y animaciones sutiles.
+
+---
+
+## ⚙️ Guía de Ejecución Rápida (Windows)
+
+### Opción 1: Ejecución Automática (Doble Clic)
 1. Descarga o clona el repositorio.
-2. Navega a la carpeta del proyecto (`Entregas/Rodrigo_Antunez_TFI`).
-3. Haz doble click sobre el archivo **`iniciar.bat`**.
-   - Este script instalará automáticamente las dependencias de desarrollo (`npm install`), abrirá tu navegador en `http://localhost:5173/` e iniciará el servidor de desarrollo en la terminal.
+2. Ve a la carpeta del proyecto.
+3. Haz doble clic en el archivo **`iniciar.bat`**.
+   * *Este script automatizado instalará las dependencias necesarias (`npm install`), iniciará el servidor de desarrollo en la terminal y abrirá la aplicación en tu navegador web.*
 
-Si deseas ejecutarlo manualmente:
-1. Abre tu terminal de comandos en la carpeta de este proyecto.
-2. Instala dependencias:
+### Opción 2: Ejecución Manual en Terminal
+Si prefieres correrlo tú mismo desde una consola:
+1. Abre tu terminal en la carpeta del proyecto.
+2. Instala las dependencias:
    ```bash
    npm install
    ```
-3. Inicia la app:
+3. Inicia el servidor de desarrollo con Vite:
    ```bash
    npm run dev
    ```
+4. Abre [http://localhost:5173/](http://localhost:5173/) en tu navegador.
 
 ---
 
 ## 🧠 Decisiones de Diseño y Arquitectura
 
-1. **Separación de Responsabilidades**:
-   - `src/data/`: Archivos estáticos de datos de equipos y partidos iniciales del Mundial 2026.
-   - `src/logic/`: Funciones puras encargadas del cálculo matemático y ordenamiento de posiciones, propagación de playoffs y cálculo de rankings.
-   - `src/ui/`: Módulos de renderizado encargados de inyectar contenido dinámico en el DOM de forma reactiva.
-   - `src/main.js`: Controlador principal que coordina el flujo de datos, interactúa con el storage y dispara los repintados.
-2. **Propagación en Cascada con Reseteo de Seguridad**:
-   Para evitar inconsistencias en el torneo, al modificarse el marcador de un partido que altere el orden de los clasificados de un grupo, el bracket de eliminación recalcula a los nuevos contrincantes de forma automática. Si dichos partidos de playoffs ya habían sido jugados con equipos anteriores, los marcadores posteriores se limpian de forma segura para evitar estados lógicos corruptos (ej. que un equipo aparezca jugando sin haber clasificado).
-3. **Autocompletado de Jugadores**:
-   Para simplificar el registro de estadísticas, cada equipo cuenta con sus jugadores estrella cargados en el código. Al abrir la carga del marcador para un partido específico, la lista de sugerencias de autocompletado nativo (`<datalist>`) se reconfigura para ofrecer únicamente los jugadores de las dos selecciones en juego, optimizando la experiencia del usuario sin sobrecargar de lógica el cliente.
+1. **Arquitectura Limpia (Separación de Responsabilidades)**:
+   * 📁 `src/data/`: Datos estáticos iniciales de equipos y partidos del Mundial 2026.
+   * 📁 `src/logic/`: Funciones puras para el cálculo de posiciones de grupos, desempates FIFA y propagación de eliminatorias.
+   * 📁 `src/ui/`: Módulos modulares de renderizado reactivo del DOM.
+   * 📄 `src/main.js`: Controlador principal (orquestador) del flujo de datos, persistencia en storage y eventos.
+
+2. **Propagación en Cascada Segura**:
+   Al modificar el resultado de un partido de fase de grupos que altere los clasificados a playoffs, el fixture recalcula dinámicamente a los rivales y limpia de forma segura cualquier marcador futuro para prevenir inconsistencias lógicas en el bracket.
+
+3. **Optimización de Entrada de Datos**:
+   Al cargar un goleador o asistente, el sistema filtra y autocompleta con una lista de sugerencias dinámicas (`<datalist>`) limitada únicamente a los jugadores de las dos selecciones que se están enfrentando.
+
