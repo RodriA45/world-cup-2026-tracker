@@ -22,15 +22,6 @@ A continuación se detallan las tecnologías clave utilizadas para construir est
 
 ---
 
-## 👤 Información del Proyecto
-
-* **Materia:** Programación III
-* **Carrera:** Tecnicatura en Programación
-* **Alumno:** Rodrigo Antunez
-* **Legajo:** 63788
-
----
-
 ## ✨ Características Principales
 
 * 🏃‍♂️ **Lista de Equipos**: Vista interactiva de las 32 selecciones organizadas en una grilla premium con banderas reales.
