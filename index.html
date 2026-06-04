@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixture del Mundial 2026 — Tiempo Real</title>
+  <link rel="stylesheet" href="./styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+</head>
+<body>
+
+  <!-- Fondo: glow mínimo decorativo -->
+  <div class="bg-glow-container">
+    <div class="glow-wrapper glow-wrapper-1">
+      <div class="bg-glow bg-glow-1"></div>
+    </div>
+    <div class="glow-wrapper glow-wrapper-2">
+      <div class="bg-glow bg-glow-2"></div>
+    </div>
+  </div>
+
+  <!-- Encabezado Principal -->
+  <header>
+    <div class="logo-container">
+      <span class="logo-icon">⚽</span>
+      <h1>Fixture Mundial 2026</h1>
+    </div>
+    <div class="header-right">
+      <!-- Hamburguesa + label de vista activa (solo mobile) -->
+      <div class="mobile-nav-trigger">
+        <span id="active-tab-label" class="active-tab-label">Grupos</span>
+        <button id="hamburger-btn" class="hamburger-btn" aria-label="Menú de navegación" aria-expanded="false">
+          <span class="ham-line"></span>
+          <span class="ham-line"></span>
+          <span class="ham-line"></span>
+        </button>
+      </div>
+      <button id="theme-toggle-btn" class="btn theme-btn">☀️ Modo Claro</button>
+      <div class="student-badge">Rodrigo Antunez</div>
+    </div>
+  </header>
+
+  <!-- Drawer de navegación mobile -->
+  <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
+    <nav class="mobile-nav-list">
+      <button class="mobile-nav-item active" data-target="groups-view">
+        <span class="mnav-icon">🛡️</span>
+        <span class="mnav-text">
+          <strong>Equipos y Grupos</strong>
+          <small>Tabla de posiciones por grupo</small>
+        </span>
+        <span class="mnav-arrow">›</span>
+      </button>
+      <button class="mobile-nav-item" data-target="fixture-view">
+        <span class="mnav-icon">📅</span>
+        <span class="mnav-text">
+          <strong>Fixture</strong>
+          <small>Resultados y carga de marcadores</small>
+        </span>
+        <span class="mnav-arrow">›</span>
+      </button>
+      <button class="mobile-nav-item" data-target="bracket-view">
+        <span class="mnav-icon">🏆</span>
+        <span class="mnav-text">
+          <strong>Fase Eliminatoria</strong>
+          <small>Llaves y bracket</small>
+        </span>
+        <span class="mnav-arrow">›</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Contenedor Principal de la App -->
+  <main class="app-container">
+
+    <!-- Panel Izquierdo: Contenido e Interfaz de Usuario -->
+    <section class="main-content-panel">
+
+      <!-- ── SCORECARD RESUMEN DEL TORNEO ── -->
+      <div class="tournament-scorecard">
+        <div class="scorecard-stat">
+          <span class="scorecard-value" id="summary-played">0/64</span>
+          <span class="scorecard-label">Partidos jugados</span>
+        </div>
+        <div class="scorecard-divider"></div>
+        <div class="scorecard-stat">
+          <span class="scorecard-value" id="summary-goals">0</span>
+          <span class="scorecard-label">Goles totales</span>
+        </div>
+        <div class="scorecard-divider"></div>
+        <div class="scorecard-stat">
+          <span class="scorecard-value accent-gold" id="summary-pct">0%</span>
+          <span class="scorecard-label">Completado</span>
+        </div>
+        <div class="scorecard-divider"></div>
+        <div class="scorecard-stat">
+          <span class="scorecard-value accent-blue" id="summary-phase">Fase de Grupos</span>
+          <span class="scorecard-label">Fase actual</span>
+        </div>
+        <!-- Barra de progreso -->
+        <div class="scorecard-progress-wrap">
+          <div class="scorecard-progress-bar" id="summary-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Fila de Navegación y Acciones -->
+      <div class="controls-row">
+        <nav class="tabs">
+          <button class="tab-btn active" data-target="groups-view">
+            <span>🛡️</span> Grupos
+          </button>
+          <button class="tab-btn" data-target="fixture-view">
+            <span>📅</span> Fixture
+          </button>
+          <button class="tab-btn" data-target="bracket-view">
+            <span>🏆</span> Eliminatorias
+          </button>
+        </nav>
+
+        <div class="action-btns">
+          <button id="simulate-matches-btn" class="btn btn-simulate">
+            <span>🎲</span> Simular
+          </button>
+          <button id="export-report-btn" class="btn btn-export">
+            <span>📄</span> Reporte PDF
+          </button>
+          <button id="export-json-btn" class="btn btn-json">
+            <span>💾</span> Exportar JSON
+          </button>
+          <button id="import-json-btn" class="btn btn-json">
+            <span>📂</span> Importar JSON
+          </button>
+          <input type="file" id="import-json-input" accept=".json" style="display:none">
+          <button id="reset-tournament-btn" class="btn btn-danger">
+            <span>🔄</span> Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <!-- Vistas Intercambiables -->
+      <div id="groups-view" class="view-section active"></div>
+      <div id="fixture-view" class="view-section"></div>
+      <div id="bracket-view" class="view-section"></div>
+
+    </section>
+
+    <!-- Panel Derecho: Estadísticas en Tiempo Real -->
+    <aside class="stats-panel">
+
+      <!-- Próximos Partidos -->
+      <div class="stats-card">
+        <h2>⚡ Próximos Partidos</h2>
+        <div id="next-matches-list" class="next-matches-list">
+          <div class="stats-empty">Cargando...</div>
+        </div>
+      </div>
+
+      <!-- Top Goleadores -->
+      <div class="stats-card">
+        <h2>🔥 Top Goleadores</h2>
+        <div class="stats-search-wrap">
+          <input
+            type="text"
+            id="scorers-search"
+            class="stats-search"
+            placeholder="🔍 Buscar jugador o equipo..."
+            autocomplete="off"
+          >
+        </div>
+        <div id="top-scorers-list" class="stats-list">
+          <div class="stats-empty">No hay goles registrados.</div>
+        </div>
+      </div>
+
+      <!-- Top Asistidores -->
+      <div class="stats-card">
+        <h2>👟 Top Asistidores</h2>
+        <div class="stats-search-wrap">
+          <input
+            type="text"
+            id="assists-search"
+            class="stats-search"
+            placeholder="🔍 Buscar jugador o equipo..."
+            autocomplete="off"
+          >
+        </div>
+        <div id="top-assists-list" class="stats-list">
+          <div class="stats-empty">No hay asistencias registradas.</div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Modal Flotante de Carga de Marcadores -->
+  <div id="score-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-match-title" class="modal-title">Carga de Marcador</h3>
+        <button type="button" class="modal-close-btn">&times;</button>
+      </div>
+
+      <form autocomplete="off">
+        <div class="score-inputs-row">
+          <div class="team-input-label">
+            <span id="modal-home-flag" class="team-input-flag"></span>
+            <span id="modal-home-name" class="team-input-name"></span>
+          </div>
+          <input type="number" id="modal-home-score" class="score-input" min="0" required placeholder="0">
+          <span class="score-divider">vs</span>
+          <input type="number" id="modal-away-score" class="score-input" min="0" required placeholder="0">
+          <div class="team-input-label">
+            <span id="modal-away-flag" class="team-input-flag"></span>
+            <span id="modal-away-name" class="team-input-name"></span>
+          </div>
+        </div>
+
+        <div id="modal-penalties-section" class="penalties-section">
+          <div class="penalties-title">Definición por Penales</div>
+          <div class="penalties-inputs">
+            <input type="number" id="modal-home-penalties" class="penalty-input" min="0" placeholder="0">
+            <span class="score-divider">vs</span>
+            <input type="number" id="modal-away-penalties" class="penalty-input" min="0" placeholder="0">
+          </div>
+        </div>
+
+        <div class="event-reg-section">
+          <h4 class="event-reg-title">⚽ Goles del Partido</h4>
+          <div id="scorers-list" class="event-list"></div>
+          <button type="button" id="add-scorer-btn" class="add-event-btn">+ Registrar Gol</button>
+        </div>
+
+        <div class="event-reg-section">
+          <h4 class="event-reg-title">👟 Asistencias del Partido</h4>
+          <div id="assists-list" class="event-list"></div>
+          <button type="button" id="add-assist-btn" class="add-event-btn">+ Registrar Asistencia</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="modal-cancel-btn" class="btn btn-danger">Cancelar</button>
+          <button type="submit" id="modal-save-btn" class="btn btn-primary">Guardar Resultado</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación Personalizado -->
+  <div id="confirm-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⚠️ Confirmar acción</h3>
+      </div>
+      <p id="confirm-modal-message" style="color: var(--text-2); line-height: 1.6; margin: 0.5rem 0 1.5rem;"></p>
+      <div class="form-actions">
+        <button id="confirm-modal-cancel" class="btn btn-danger" style="min-width: 100px;">Cancelar</button>
+        <button id="confirm-modal-accept" class="btn btn-primary" style="min-width: 100px;">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Notificaciones Flotantes (Toasts) -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Botón Flotante para Acciones Rápidas (Mobile FAB) -->
+  <div id="mobile-fab" class="mobile-fab">
+    <button class="fab-trigger" aria-label="Acciones rápidas">⚡</button>
+    <div class="fab-menu">
+      <button id="fab-simulate" class="fab-item">🎲 Simular</button>
+      <button id="fab-export" class="fab-item">📄 Reporte</button>
+      <button id="fab-reset" class="fab-item fab-danger">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- Contenedor para Impresión / PDF -->
+  <div id="print-section"></div>
+
+  <!-- Punto de Entrada Principal -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

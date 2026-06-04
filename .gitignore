@@ -1,0 +1,16 @@
+# Dependencias
+node_modules/
+# Build de producción
+dist/
+# Archivos de entorno y logs
+.env
+.env.local
+*.log
+npm-debug.log*
+# Caché de Vite
+.vite/
+# Lock files (opcional — muchos proyectos sí los commitean)
+package-lock.json
+# Sistema operativo
+.DS_Store
+Thumbs.db
