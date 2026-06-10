@@ -1770,3 +1770,679 @@ html { overflow-x: hidden; }
   .filter-group { width: 100%; }
   .select-input { width: 100%; }
 }
+
+/* ==========================================================================
+   💡 SECCIÓN HERO - DISEÑO PREMIUM DE LA CANCHA & CONTADORES
+   ========================================================================== */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem 8rem;
+  background: radial-gradient(circle at 50% 30%, rgba(14, 39, 23, 0.9) 0%, rgba(7, 18, 12, 0.98) 70%, #030805 100%);
+  overflow: hidden;
+  z-index: 5;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+}
+
+body.light-theme .hero-section {
+  background: radial-gradient(circle at 50% 30%, rgba(220, 252, 231, 0.8) 0%, rgba(240, 253, 244, 0.95) 75%, #f0fdf4 100%);
+  border-bottom-color: rgba(34, 197, 94, 0.15);
+}
+
+/* Decoraciones del Campo de Fútbol */
+.pitch-decoration {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.8;
+}
+.pitch-half-line {
+  position: absolute;
+  top: 50%; left: 0;
+  width: 100%; height: 1px;
+  background: rgba(34, 197, 94, 0.08);
+}
+body.light-theme .pitch-half-line { background: rgba(34, 197, 94, 0.15); }
+
+.pitch-center-circle {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: clamp(280px, 45vw, 550px);
+  height: clamp(280px, 45vw, 550px);
+  border: 1px dashed rgba(34, 197, 94, 0.08);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+body.light-theme .pitch-center-circle { border-color: rgba(34, 197, 94, 0.15); }
+
+.pitch-penalty-box {
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: clamp(350px, 60vw, 800px);
+  height: 25%;
+  border: 1px solid rgba(34, 197, 94, 0.05);
+  transform: translateX(-50%);
+  border-bottom: none;
+}
+body.light-theme .pitch-penalty-box { border-color: rgba(34, 197, 94, 0.12); }
+
+/* Contenedor Principal Hero */
+.hero-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.hero-main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Pelota de Fútbol Flotante */
+.floating-ball-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px; height: 65px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+  animation: ball-levitate 4s ease-in-out infinite;
+}
+.football-ball {
+  font-size: 2.2rem;
+  line-height: 1;
+  animation: ball-spin 12s linear infinite;
+  display: inline-block;
+}
+
+@keyframes ball-levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); box-shadow: 0 20px 32px rgba(34, 197, 94, 0.25); }
+}
+@keyframes ball-spin {
+  100% { transform: rotate(360deg); }
+}
+
+.hero-title {
+  font-size: clamp(2.3rem, 5vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #ffffff 20%, #a7f3d0 60%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.05;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 50px rgba(34, 197, 94, 0.15);
+  font-family: var(--font);
+}
+body.light-theme .hero-title {
+  background: linear-gradient(135deg, #0f172a 20%, #15803d 70%, #166534 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text-2);
+  max-width: 580px;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+}
+
+/* Estilo para los Contadores */
+.countdown-widget {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--r-lg);
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 2.5rem;
+}
+body.light-theme .countdown-widget {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(34, 197, 94, 0.15);
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.06);
+}
+
+.countdown-widget h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  margin-bottom: 0.875rem;
+}
+body.light-theme .countdown-widget h3 {
+  color: #166534;
+}
+
+.countdown-timer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.timer-number {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  font-family: monospace, var(--font);
+  color: #22c55e;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+}
+body.light-theme .timer-number {
+  color: #16a34a;
+  text-shadow: none;
+}
+
+.timer-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  margin-top: 5px;
+}
+
+.font-separator {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.15);
+  padding-bottom: 12px;
+  align-self: center;
+}
+body.light-theme .font-separator {
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-hero {
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.85rem 1.8rem;
+  border-radius: var(--r-md);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+}
+
+.btn-hero-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-1);
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.85rem 1.8rem;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-hero-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+body.light-theme .btn-hero-secondary {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+body.light-theme .btn-hero-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* Tarjeta Destacada de Argentina */
+.argentina-card {
+  border-radius: var(--r-lg);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.argentina-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -50%;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.animate-pulse-border {
+  animation: pulse-green-border 3s infinite alternate;
+}
+@keyframes pulse-green-border {
+  0% { border-color: rgba(34, 197, 94, 0.15); box-shadow: var(--shadow-lg), 0 0 10px rgba(34, 197, 94, 0.05); }
+  100% { border-color: rgba(34, 197, 94, 0.45); box-shadow: var(--shadow-lg), 0 0 20px rgba(34, 197, 94, 0.15); }
+}
+
+.argentina-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.live-indicator {
+  align-self: flex-start;
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+body.light-theme .live-indicator {
+  color: #1d4ed8;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.argentina-card h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.vs-matchup {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--r-md);
+  padding: 0.85rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+body.light-theme .vs-matchup {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.vs-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 40%;
+}
+.vs-team span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-2);
+  text-align: center;
+}
+.vs-flag {
+  width: 48px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.vs-divider {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-3);
+  background: var(--border);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+}
+
+.match-info-brief {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-2);
+  text-align: center;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+
+.arg-countdown {
+  background: rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.02);
+  padding: 0.85rem;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+body.light-theme .arg-countdown {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.countdown-timer.compact .timer-number {
+  font-size: 1.35rem;
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+body.light-theme .countdown-timer.compact .timer-number {
+  color: #2563eb;
+  text-shadow: none;
+}
+.countdown-timer.compact .timer-label {
+  font-size: 0.55rem;
+}
+.countdown-timer.compact .font-separator {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+/* Indicador de Scroll hacia abajo */
+.scroll-down-indicator {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  z-index: 4;
+}
+.scroll-down-indicator:hover {
+  color: var(--text-1);
+}
+
+.chevron-arrow {
+  width: 20px; height: 20px;
+  border-right: 3px solid var(--text-3);
+  border-bottom: 3px solid var(--text-3);
+  transform: rotate(45deg);
+  animation: chevron-bounce 1.5s infinite;
+}
+.scroll-down-indicator:hover .chevron-arrow {
+  border-color: var(--text-1);
+}
+
+@keyframes chevron-bounce {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(0, 8px) rotate(45deg); }
+}
+
+/* ==========================================================================
+   🏟️ SECCIÓN SEDES / ESTADIOS
+   ========================================================================== */
+.stadiums-section {
+  background: #060c08;
+  padding: 6rem 2rem 7rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 5;
+}
+body.light-theme .stadiums-section {
+  background: #f7faf8;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stadiums-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  color: var(--text-1);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.stadiums-subtitle {
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: var(--text-3);
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto 3.5rem;
+}
+
+.stadiums-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.stadium-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.stadium-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(34, 197, 94, 0.25);
+  box-shadow: var(--shadow-lg), 0 8px 30px rgba(34, 197, 94, 0.06);
+}
+body.light-theme .stadium-card {
+  border-color: rgba(0,0,0,0.06);
+}
+body.light-theme .stadium-card:hover {
+  border-color: rgba(34, 197, 94, 0.25);
+  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.08);
+}
+
+.stadium-img-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+.stadium-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.stadium-card:hover .stadium-img {
+  transform: scale(1.05);
+}
+
+.stadium-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.stadium-badge.Mexico { background: #15803d; }
+.stadium-badge.USA { background: #1d4ed8; }
+
+.stadium-card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.stadium-card-content h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 0.35rem;
+}
+
+.stadium-location {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #22c55e;
+  margin-bottom: 0.75rem;
+}
+body.light-theme .stadium-location {
+  color: #166534;
+}
+
+.stadium-desc {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.stadium-stats {
+  display: flex;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.stadium-stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stadium-stat-val {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+.stadium-stat-lbl {
+  font-size: 0.65rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   📱 RESPONSIVIDAD HERO & STADIUMS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .hero-main-content {
+    align-items: center;
+    text-align: center;
+  }
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .countdown-widget {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-actions {
+    justify-content: center;
+  }
+  .hero-sidebar {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  
+  .stadiums-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    padding: 5rem 1rem 6rem;
+  }
+  .hero-title {
+    font-size: 2.1rem;
+  }
+  .hero-subtitle {
+    margin-bottom: 1.75rem;
+  }
+  .countdown-timer .timer-number {
+    font-size: 1.6rem;
+  }
+  .font-separator {
+    font-size: 1.3rem;
+  }
+  .timer-label {
+    font-size: 0.58rem;
+  }
+  .countdown-widget {
+    padding: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .btn-hero, .btn-hero-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .stadiums-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .stadiums-subtitle {
+    margin-bottom: 2.5rem;
+  }
+  .stadium-img-wrapper {
+    height: 180px;
+  }
+}
+

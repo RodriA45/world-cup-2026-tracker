@@ -29,6 +29,7 @@ class App {
 
     this.bindEvents();
     this.initTheme();
+    this.initCountdowns();
     this.render();
   }
 
@@ -47,6 +48,72 @@ class App {
       document.body.classList.remove('light-theme');
       themeBtn.textContent = '☀️ Modo Claro';
     }
+  }
+
+  /**
+   * Inicializa las cuentas regresivas del Mundial y del debut de Argentina.
+   */
+  initCountdowns() {
+    const WORLD_CUP_START_DATE = new Date('2026-06-11T17:00:00Z').getTime(); // MEX vs RSA
+    const ARGENTINA_DEBUT_DATE = new Date('2026-06-16T15:00:00Z').getTime(); // ARG vs ALG
+
+    const updateTimers = () => {
+      const now = new Date().getTime();
+
+      // 1. Contador Mundial
+      const wcDistance = WORLD_CUP_START_DATE - now;
+      const wcTimerEl = document.getElementById('world-cup-timer');
+      
+      if (wcDistance < 0) {
+        if (wcTimerEl) {
+          wcTimerEl.innerHTML = `<div style="font-size: 1.35rem; font-weight: 800; color: #22c55e; width: 100%; text-align: center; letter-spacing: 0.5px;">¡EL MUNDIAL HA COMENZADO! ⚽</div>`;
+        }
+      } else {
+        const days = Math.floor(wcDistance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((wcDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((wcDistance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((wcDistance % (1000 * 60)) / 1000);
+
+        const dEl = document.getElementById('wc-days');
+        const hEl = document.getElementById('wc-hours');
+        const mEl = document.getElementById('wc-minutes');
+        const sEl = document.getElementById('wc-seconds');
+
+        if (dEl) dEl.textContent = String(days).padStart(2, '0');
+        if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+        if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
+        if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
+      }
+
+      // 2. Contador Argentina
+      const argDistance = ARGENTINA_DEBUT_DATE - now;
+      const argTimerEl = document.getElementById('argentina-timer');
+      
+      if (argDistance < 0) {
+        if (argTimerEl) {
+          argTimerEl.innerHTML = `<div style="font-size: 0.95rem; font-weight: 800; color: #60a5fa; width: 100%; text-align: center;">¡ARGENTINA JUGANDO! 🇦🇷</div>`;
+        }
+      } else {
+        const days = Math.floor(argDistance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((argDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((argDistance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((argDistance % (1000 * 60)) / 1000);
+
+        const dEl = document.getElementById('arg-days');
+        const hEl = document.getElementById('arg-hours');
+        const mEl = document.getElementById('arg-minutes');
+        const sEl = document.getElementById('arg-seconds');
+
+        if (dEl) dEl.textContent = String(days).padStart(2, '0');
+        if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+        if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
+        if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
+      }
+    };
+
+    // Ejecutar inmediatamente y luego cada segundo
+    updateTimers();
+    setInterval(updateTimers, 1000);
   }
 
   /**
@@ -89,6 +156,32 @@ class App {
   }
 
   bindEvents() {
+    // Scroll suave para botón del Hero y la flecha hacia abajo
+    const exploreBtn = document.getElementById('explore-btn');
+    const scrollArrow = document.getElementById('scroll-down-arrow');
+    
+    const scrollToDashboard = () => {
+      const dashboardHeader = document.querySelector('header');
+      if (dashboardHeader) {
+        dashboardHeader.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    if (exploreBtn) exploreBtn.addEventListener('click', scrollToDashboard);
+    if (scrollArrow) scrollArrow.addEventListener('click', scrollToDashboard);
+
+    // Scroll suave para enlaces internos (como ver sedes)
+    document.querySelectorAll('.btn-hero-secondary, a[href^="#stadiums-section"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
     // Manejo de Navegación por pestañas
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(tab => {

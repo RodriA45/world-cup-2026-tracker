@@ -19,6 +19,194 @@
     </div>
   </div>
 
+  <!-- Hero Section -->
+  <section id="hero-section" class="hero-section">
+    <!-- Stadium background lines decoration -->
+    <div class="pitch-decoration">
+      <div class="pitch-half-line"></div>
+      <div class="pitch-center-circle"></div>
+      <div class="pitch-penalty-box"></div>
+    </div>
+    
+    <div class="hero-container">
+      <div class="hero-main-content">
+        <!-- Floating Animated Football -->
+        <div class="floating-ball-container">
+          <div class="football-ball">⚽</div>
+        </div>
+
+        <h1 class="hero-title">COPA MUNDIAL 2026</h1>
+        <p class="hero-subtitle">El Fixture Interactivo y Estadísticas en Tiempo Real</p>
+
+        <!-- World Cup Countdown Widget -->
+        <div class="countdown-widget global-countdown">
+          <h3>El mundial empieza en:</h3>
+          <div class="countdown-timer" id="world-cup-timer">
+            <div class="timer-segment">
+              <span class="timer-number" id="wc-days">00</span>
+              <span class="timer-label">Días</span>
+            </div>
+            <div class="timer-segment font-separator">:</div>
+            <div class="timer-segment">
+              <span class="timer-number" id="wc-hours">00</span>
+              <span class="timer-label">Hs</span>
+            </div>
+            <div class="timer-segment font-separator">:</div>
+            <div class="timer-segment">
+              <span class="timer-number" id="wc-minutes">00</span>
+              <span class="timer-label">Min</span>
+            </div>
+            <div class="timer-segment font-separator">:</div>
+            <div class="timer-segment">
+              <span class="timer-number" id="wc-seconds">00</span>
+              <span class="timer-label">Seg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="hero-actions">
+          <button id="explore-btn" class="btn btn-hero">Explorar Fixture ➔</button>
+          <a href="#stadiums-section" class="btn btn-hero-secondary">Sedes del Mundial</a>
+        </div>
+      </div>
+
+      <!-- Argentina Debut Highlight Card -->
+      <div class="hero-sidebar">
+        <div class="argentina-card glass-panel animate-pulse-border">
+          <div class="argentina-card-header">
+            <span class="live-indicator">DEBUT DESTACADO</span>
+            <h4>Debut de la Selección</h4>
+          </div>
+          <div class="vs-matchup">
+            <div class="vs-team">
+              <img src="https://flagcdn.com/w80/ar.png" alt="Argentina" class="vs-flag">
+              <span>Argentina</span>
+            </div>
+            <span class="vs-divider">VS</span>
+            <div class="vs-team">
+              <img src="https://flagcdn.com/w80/dz.png" alt="Argelia" class="vs-flag">
+              <span>Argelia</span>
+            </div>
+          </div>
+          <div class="match-info-brief">
+            📅 Martes 16 de Junio, 2026<br>
+            🕒 12:00 HS (Hora Local)
+          </div>
+          
+          <div class="countdown-widget arg-countdown">
+            <div class="countdown-timer compact" id="argentina-timer">
+              <div class="timer-segment">
+                <span class="timer-number" id="arg-days">00</span>
+                <span class="timer-label">Días</span>
+              </div>
+              <div class="timer-segment font-separator">:</div>
+              <div class="timer-segment">
+                <span class="timer-number" id="arg-hours">00</span>
+                <span class="timer-label">Hs</span>
+              </div>
+              <div class="timer-segment font-separator">:</div>
+              <div class="timer-segment">
+                <span class="timer-number" id="arg-minutes">00</span>
+                <span class="timer-label">Min</span>
+              </div>
+              <div class="timer-segment font-separator">:</div>
+              <div class="timer-segment">
+                <span class="timer-number" id="arg-seconds">00</span>
+                <span class="timer-label">Seg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated Bouncing Arrow -->
+    <div class="scroll-down-indicator" id="scroll-down-arrow">
+      <span>Ver el Fixture & Sedes</span>
+      <div class="chevron-arrow"></div>
+    </div>
+  </section>
+
+  <!-- Stadiums Section -->
+  <section id="stadiums-section" class="stadiums-section">
+    <div class="section-container">
+      <h2 class="stadiums-title">🏟️ Sedes Destacadas del Mundial 2026</h2>
+      <p class="stadiums-subtitle">Conoce los imponentes escenarios de Norteamérica donde se escribirá la historia.</p>
+      
+      <div class="stadiums-grid">
+        <!-- Estadio Azteca -->
+        <div class="stadium-card glass-panel">
+          <div class="stadium-img-wrapper">
+            <img src="./src/assets/stadiums/stadium_azteca.png" alt="Estadio Azteca" class="stadium-img">
+            <span class="stadium-badge Mexico">México</span>
+          </div>
+          <div class="stadium-card-content">
+            <h3>Estadio Azteca</h3>
+            <p class="stadium-location">📍 Ciudad de México, México</p>
+            <p class="stadium-desc">El legendario coloso de Santa Úrsula. Será el primer estadio de la historia en albergar tres copas mundiales y el escenario del gran partido inaugural del Mundial 2026.</p>
+            <div class="stadium-stats">
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">87,523</span>
+                <span class="stadium-stat-lbl">Capacidad</span>
+              </div>
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">Inaugural</span>
+                <span class="stadium-stat-lbl">Partidos Clave</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MetLife Stadium -->
+        <div class="stadium-card glass-panel">
+          <div class="stadium-img-wrapper">
+            <img src="./src/assets/stadiums/stadium_metlife.png" alt="MetLife Stadium" class="stadium-img">
+            <span class="stadium-badge USA">EE.UU.</span>
+          </div>
+          <div class="stadium-card-content">
+            <h3>MetLife Stadium</h3>
+            <p class="stadium-location">📍 Nueva York / Nueva Jersey, EE.UU.</p>
+            <p class="stadium-desc">Un gigante de la costa este americana con tecnología de punta. Ha sido seleccionado oficialmente como la sede para albergar la Gran Final del Mundial 2026.</p>
+            <div class="stadium-stats">
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">82,500</span>
+                <span class="stadium-stat-lbl">Capacidad</span>
+              </div>
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">La Final</span>
+                <span class="stadium-stat-lbl">Partidos Clave</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SoFi Stadium -->
+        <div class="stadium-card glass-panel">
+          <div class="stadium-img-wrapper">
+            <img src="./src/assets/stadiums/stadium_sofi.png" alt="SoFi Stadium" class="stadium-img">
+            <span class="stadium-badge USA">EE.UU.</span>
+          </div>
+          <div class="stadium-card-content">
+            <h3>SoFi Stadium</h3>
+            <p class="stadium-location">📍 Los Ángeles, California, EE.UU.</p>
+            <p class="stadium-desc">La joya de la arquitectura deportiva. Con su inmenso techo translúcido y su pantalla circular de 360 grados, será la sede principal del debut de EE.UU. y partidos clave de fase eliminatoria.</p>
+            <div class="stadium-stats">
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">70,240</span>
+                <span class="stadium-stat-lbl">Capacidad</span>
+              </div>
+              <div class="stadium-stat-item">
+                <span class="stadium-stat-val">Fase Final</span>
+                <span class="stadium-stat-lbl">Partidos Clave</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Encabezado Principal -->
   <header>
     <div class="logo-container">
