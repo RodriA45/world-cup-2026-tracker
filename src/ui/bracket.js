@@ -107,9 +107,8 @@ export function renderBracketView(container, playoffMatches, onEditMatch) {
       matchDiv.addEventListener('click', () => {
         if (m.home && m.away) {
           onEditMatch(m);
-        } else {
-          alert(`Este partido se definirá al clasificar los equipos correspondientes de la ronda previa (${m.homePlaceholder} y ${m.awayPlaceholder}).`);
         }
+        // Si los equipos no están definidos, el clic simplemente no hace nada (no molesta al usuario)
       });
 
       matchWrapper.appendChild(matchDiv);

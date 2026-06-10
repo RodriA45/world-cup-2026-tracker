@@ -54,6 +54,10 @@
   --t: transform 0.2s ease, background-color 0.2s ease,
        border-color 0.2s ease, box-shadow 0.2s ease,
        color 0.15s ease, opacity 0.2s ease;
+
+  /* Alias de compatibilidad (usados en JS-generated HTML) */
+  --accent-gold: var(--gold);
+  --text-muted:  var(--text-3);
 }
 
 /* Modo Claro */
@@ -3058,3 +3062,50 @@ body.light-theme .stadium-modal-info-grid {
   transform: translateY(0);
 }
 
+
+/* ==========================================
+   RESPONSIVE ADICIONAL — CORRECCIONES MÓVIL
+   ========================================== */
+
+/* Reproductor de música: ancho ajustado en pantallas pequeñas */
+@media (max-width: 480px) {
+  .music-player-widget.expanded {
+    width: calc(100vw - 3rem);
+    max-width: 300px;
+    left: 1rem;
+    bottom: 1rem;
+  }
+  .music-player-widget.collapsed {
+    left: 1rem;
+    bottom: 1rem;
+  }
+}
+
+/* Modal de estadio: hoja completa desde abajo en mobile */
+@media (max-width: 640px) {
+  .stadium-modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: var(--r-lg) var(--r-lg) 0 0 !important;
+    max-height: 88vh;
+    align-self: flex-end;
+  }
+  .stadium-modal-hero {
+    height: 180px;
+  }
+  .stadium-modal-info-grid {
+    gap: 0.5rem;
+  }
+  .stadium-info-val {
+    font-size: 0.85rem;
+  }
+}
+
+/* Corrección: en 420px los tabs muestran texto (ya no hay emojis para ocultar) */
+@media (max-width: 420px) {
+  .tab-btn {
+    font-size: 0.72rem !important;
+    min-width: 72px;
+    padding: 0.5rem 0.35rem;
+  }
+}
