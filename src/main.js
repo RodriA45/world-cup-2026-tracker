@@ -11,6 +11,169 @@ import { ScoreForm } from './ui/scoreForm.js';
 // Clave para almacenamiento local
 const LOCAL_STORAGE_KEY = 'tfi_mundial_2026_state';
 
+// Clase del reproductor de música flotante
+class MusicPlayer {
+  constructor() {
+    this.playlist = [
+      {
+        title: 'Waka Waka (Esto es África)',
+        artist: 'Shakira',
+        url: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3'
+      },
+      {
+        title: "Wavin' Flag",
+        artist: "K'Naan",
+        url: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3'
+      }
+    ];
+    this.currentIndex = 0;
+    this.isPlaying = false;
+    this.isMuted = false;
+    
+    this.audio = new Audio();
+    this.audio.volume = 0.4;
+    this.audio.preload = 'metadata';
+    
+    this.widget = document.getElementById('music-player-widget');
+    this.toggleBtn = document.getElementById('player-toggle-btn');
+    this.collapseBtn = document.getElementById('player-collapse-btn');
+    this.playBtn = document.getElementById('player-play-btn');
+    this.nextBtn = document.getElementById('player-next-btn');
+    this.muteBtn = document.getElementById('player-mute-btn');
+    this.trackTitle = document.getElementById('player-track-title');
+    this.trackArtist = document.getElementById('player-track-artist');
+    this.progressBar = document.getElementById('player-progress-bar');
+    this.progressWrap = document.getElementById('player-progress-wrap');
+    this.vinylDisc = document.getElementById('player-vinyl-disc');
+  }
+  
+  init() {
+    if (!this.widget) return;
+    
+    this.loadTrack(this.currentIndex);
+    
+    this.toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.expand();
+    });
+    this.collapseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.collapse();
+    });
+    
+    this.widget.addEventListener('click', () => {
+      if (this.widget.classList.contains('collapsed')) {
+        this.expand();
+      }
+    });
+    
+    this.playBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.togglePlay();
+    });
+    
+    this.nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.nextTrack();
+    });
+    
+    this.muteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleMute();
+    });
+    
+    this.progressWrap.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rect = this.progressWrap.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percent = clickX / rect.width;
+      if (this.audio.duration) {
+        this.audio.currentTime = percent * this.audio.duration;
+      }
+    });
+    
+    this.audio.addEventListener('timeupdate', () => this.updateProgress());
+    this.audio.addEventListener('ended', () => this.nextTrack());
+  }
+  
+  loadTrack(index) {
+    const track = this.playlist[index];
+    this.audio.src = track.url;
+    this.audio.load();
+    this.trackTitle.textContent = track.title;
+    this.trackArtist.textContent = track.artist;
+    this.progressBar.style.width = '0%';
+    this.updateUI();
+  }
+  
+  expand() {
+    this.widget.classList.remove('collapsed');
+    this.widget.classList.add('expanded');
+  }
+  
+  collapse() {
+    this.widget.classList.remove('expanded');
+    this.widget.classList.add('collapsed');
+  }
+  
+  togglePlay() {
+    if (this.isPlaying) {
+      this.audio.pause();
+      this.isPlaying = false;
+    } else {
+      this.audio.play().then(() => {
+        this.isPlaying = true;
+        this.updateUI();
+      }).catch(err => {
+        console.warn("Playback failed, user interaction required: ", err);
+      });
+    }
+    this.updateUI();
+  }
+  
+  nextTrack() {
+    this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
+    this.loadTrack(this.currentIndex);
+    if (this.isPlaying) {
+      this.audio.play().then(() => {
+        this.isPlaying = true;
+        this.updateUI();
+      }).catch(err => {
+        console.warn("Next track play failed: ", err);
+        this.isPlaying = false;
+        this.updateUI();
+      });
+    }
+  }
+  
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    this.audio.muted = this.isMuted;
+    if (this.isMuted) {
+      this.muteBtn.classList.add('muted');
+    } else {
+      this.muteBtn.classList.remove('muted');
+    }
+  }
+  
+  updateProgress() {
+    if (this.audio.duration) {
+      const pct = (this.audio.currentTime / this.audio.duration) * 100;
+      this.progressBar.style.width = `${pct}%`;
+    }
+  }
+  
+  updateUI() {
+    if (this.isPlaying) {
+      this.playBtn.classList.add('playing');
+      this.vinylDisc.classList.add('playing');
+    } else {
+      this.playBtn.classList.remove('playing');
+      this.vinylDisc.classList.remove('playing');
+    }
+  }
+}
+
 class App {
   constructor() {
     this.groupMatches = [];
@@ -18,11 +181,17 @@ class App {
     this.activeTab = 'groups-view';
     this.scoreForm = null;
     this.isSimulating = false;
+    this.musicPlayer = null;
   }
 
   start() {
+    this.initSplash();
     this.loadState();
     
+    // Inicializar el reproductor de música
+    this.musicPlayer = new MusicPlayer();
+    this.musicPlayer.init();
+
     // Inicializar el controlador del formulario de carga
     this.scoreForm = new ScoreForm((matchId, scoreData) => this.saveMatchResult(matchId, scoreData));
     this.scoreForm.init();
@@ -30,7 +199,33 @@ class App {
     this.bindEvents();
     this.initTheme();
     this.initCountdowns();
+    this.initStadiumModals();
     this.render();
+  }
+
+  /**
+   * Controla el desvanecimiento de la pantalla Splash de introducción.
+   */
+  initSplash() {
+    document.body.classList.add('intro-active');
+    const introOverlay = document.getElementById('app-intro-overlay');
+    if (!introOverlay) {
+      document.body.classList.remove('intro-active');
+      return;
+    }
+    
+    // Ocultar overlay después de 1500ms
+    setTimeout(() => {
+      introOverlay.classList.add('fade-out');
+      document.body.classList.remove('intro-active');
+      
+      // Remover completamente del DOM tras la animación
+      setTimeout(() => {
+        if (introOverlay.parentNode) {
+          introOverlay.parentNode.removeChild(introOverlay);
+        }
+      }, 600);
+    }, 1500);
   }
 
   /**
@@ -43,10 +238,10 @@ class App {
     const savedTheme = localStorage.getItem('tfi_mundial_2026_theme') || 'dark';
     if (savedTheme === 'light') {
       document.body.classList.add('light-theme');
-      themeBtn.textContent = '🌙 Modo Oscuro';
+      themeBtn.textContent = 'Modo Oscuro';
     } else {
       document.body.classList.remove('light-theme');
-      themeBtn.textContent = '☀️ Modo Claro';
+      themeBtn.textContent = 'Modo Claro';
     }
   }
 
@@ -66,7 +261,7 @@ class App {
       
       if (wcDistance < 0) {
         if (wcTimerEl) {
-          wcTimerEl.innerHTML = `<div style="font-size: 1.35rem; font-weight: 800; color: #22c55e; width: 100%; text-align: center; letter-spacing: 0.5px;">¡EL MUNDIAL HA COMENZADO! ⚽</div>`;
+          wcTimerEl.innerHTML = `<div style="font-size: 1.35rem; font-weight: 800; color: #22c55e; width: 100%; text-align: center; letter-spacing: 0.5px;">¡EL MUNDIAL HA COMENZADO!</div>`;
         }
       } else {
         const days = Math.floor(wcDistance / (1000 * 60 * 60 * 24));
@@ -91,7 +286,7 @@ class App {
       
       if (argDistance < 0) {
         if (argTimerEl) {
-          argTimerEl.innerHTML = `<div style="font-size: 0.95rem; font-weight: 800; color: #60a5fa; width: 100%; text-align: center;">¡ARGENTINA JUGANDO! 🇦🇷</div>`;
+          argTimerEl.innerHTML = `<div style="font-size: 0.95rem; font-weight: 800; color: #60a5fa; width: 100%; text-align: center;">¡ARGENTINA EN JUEGO!</div>`;
         }
       } else {
         const days = Math.floor(argDistance / (1000 * 60 * 60 * 24));
@@ -156,6 +351,25 @@ class App {
   }
 
   bindEvents() {
+    // Configurar animaciones de scroll reveal para secciones
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    if ('IntersectionObserver' in window && revealElements.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.05,
+        rootMargin: '0px 0px -50px 0px'
+      });
+      revealElements.forEach(el => observer.observe(el));
+    } else {
+      revealElements.forEach(el => el.classList.add('revealed'));
+    }
+
     // Scroll suave para botón del Hero y la flecha hacia abajo
     const exploreBtn = document.getElementById('explore-btn');
     const scrollArrow = document.getElementById('scroll-down-arrow');
@@ -215,13 +429,13 @@ class App {
         if (document.body.classList.contains('light-theme')) {
           document.body.classList.remove('light-theme');
           localStorage.setItem('tfi_mundial_2026_theme', 'dark');
-          themeBtn.textContent = '☀️ Modo Claro';
-          this.showToast('Modo Oscuro premium activado 🌙', 'info');
+          themeBtn.textContent = 'Modo Claro';
+          this.showToast('Modo Oscuro activado', 'info');
         } else {
           document.body.classList.add('light-theme');
           localStorage.setItem('tfi_mundial_2026_theme', 'light');
-          themeBtn.textContent = '🌙 Modo Oscuro';
-          this.showToast('Modo Claro limpio activado ☀️', 'info');
+          themeBtn.textContent = 'Modo Oscuro';
+          this.showToast('Modo Claro activado', 'info');
         }
       });
     }
@@ -254,7 +468,7 @@ class App {
           () => {
             this.initNewState();
             this.render();
-            this.showToast('Se han restablecido todos los partidos del fixture 🔄', 'warning');
+            this.showToast('Se han restablecido todos los partidos del fixture', 'warning');
           }
         );
       });
@@ -458,14 +672,8 @@ class App {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
 
-    let icon = '💡';
-    if (type === 'success') icon = '🏆';
-    else if (type === 'error') icon = '❌';
-    else if (type === 'info') icon = '⚡';
-    else if (type === 'warning') icon = '🔄';
-
     toast.innerHTML = `
-      <span class="toast-icon">${icon}</span>
+      <span class="toast-indicator"></span>
       <span class="toast-text">${message}</span>
       <button class="toast-close" type="button">&times;</button>
     `;
@@ -677,7 +885,7 @@ class App {
       this.saveState();
       this.isSimulating = false;
       this.render();
-      this.showToast('Partidos simulados con éxito y llaves completadas 🎲', 'success');
+      this.showToast('Partidos simulados con éxito y llaves completadas', 'success');
     }, 800);
   }
 
@@ -691,7 +899,7 @@ class App {
     let html = `
       <div class="print-report">
         <header class="print-header">
-          <span class="print-logo-icon">⚽</span>
+          <span class="print-logo-icon"></span>
           <div class="print-header-text">
             <h1>REPORTE OFICIAL DEL MUNDIAL 2026</h1>
             <p class="print-meta">Estudiante: Rodrigo Antunez &bull; Generado el: ${new Date().toLocaleString()}</p>
@@ -699,7 +907,7 @@ class App {
         </header>
 
         <section class="print-section-content">
-          <h2 class="print-section-title">📊 Tablas de Posiciones de Grupos</h2>
+          <h2 class="print-section-title">Tablas de Posiciones de Grupos</h2>
           <div class="print-groups-grid">
     `;
 
@@ -762,7 +970,7 @@ class App {
         <div class="print-page-break"></div>
 
         <section class="print-section-content">
-          <h2 class="print-section-title">🏆 Cuadro de Fase Eliminatoria (Playoffs)</h2>
+          <h2 class="print-section-title">Cuadro de Fase Eliminatoria (Playoffs)</h2>
           <div class="print-playoffs-list">
     `;
 
@@ -829,7 +1037,7 @@ class App {
         <div class="print-page-break"></div>
 
         <section class="print-section-content">
-          <h2 class="print-section-title">🔥 Líderes de Estadísticas</h2>
+          <h2 class="print-section-title">Líderes de Estadísticas</h2>
           <div class="print-stats-columns">
             
             <div class="print-stats-col">
@@ -928,7 +1136,7 @@ class App {
       printContainer.innerHTML = '';
     }, 3000);
 
-    this.showToast('Reporte generado en PDF y enviado a impresión 📥', 'success');
+    this.showToast('Reporte generado en PDF y enviado a impresión', 'success');
   }
 
   /**
@@ -944,7 +1152,7 @@ class App {
     a.download = `fixture_mundial_2026_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    this.showToast('Estado del torneo exportado como JSON 💾', 'success');
+    this.showToast('Estado del torneo exportado como JSON', 'success');
   }
 
   /**
@@ -962,9 +1170,9 @@ class App {
         this.playoffMatches = parsed.playoffMatches;
         this.saveState();
         this.render();
-        this.showToast('Estado del torneo importado correctamente ✅', 'success');
+        this.showToast('Estado del torneo importado correctamente', 'success');
       } catch (err) {
-        this.showToast('Error al importar: archivo JSON inválido ❌', 'error');
+        this.showToast('Error al importar: archivo JSON inválido', 'error');
       }
       // Reset input para permitir reimportar el mismo archivo
       event.target.value = '';
@@ -997,7 +1205,7 @@ class App {
       this.saveState();
       this.render();
 
-      this.showToast(`Partido ${matchId} actualizado: ${scoreData.homeScore} - ${scoreData.awayScore} ⚽`, 'success');
+      this.showToast(`Partido ${matchId} actualizado: ${scoreData.homeScore} - ${scoreData.awayScore}`, 'success');
     }
   }
 
@@ -1059,7 +1267,7 @@ class App {
       const playedCuartos = this.playoffMatches.filter(m => m.round === 'cuartos' && m.homeScore !== null).length;
       const playedSemis = this.playoffMatches.filter(m => m.round === 'semifinales' && m.homeScore !== null).length;
       const playedFinal = this.playoffMatches.filter(m => m.round === 'final' && m.homeScore !== null).length;
-      if (playedFinal > 0) phase = '🏆 Finalizado';
+      if (playedFinal > 0) phase = 'Finalizado';
       else if (playedSemis > 0) phase = 'Final / 3er Puesto';
       else if (playedCuartos > 0) phase = 'Semifinales';
       else if (playedOctavos > 0) phase = 'Cuartos de Final';
@@ -1113,7 +1321,7 @@ class App {
         <div class="next-match-item">
           <div class="next-match-header">
             <span class="next-match-label">${label}</span>
-            <span class="next-match-date">📅 ${dateStr} ${timeStr}</span>
+            <span class="next-match-date">${dateStr} ${timeStr}</span>
           </div>
           <div class="next-match-teams">
             <span class="next-match-team">
@@ -1161,7 +1369,7 @@ class App {
       : data;
 
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="stats-empty">${query ? '🔍 Sin resultados para "' + query + '"' : (isScorers ? '⚽ No hay goles registrados aún.' : '👟 No hay asistencias registradas aún.')}</div>`;
+      container.innerHTML = `<div class="stats-empty">${query ? 'Sin resultados para "' + query + '"' : (isScorers ? 'No hay goles registrados aún.' : 'No hay asistencias registradas aún.')}</div>`;
       return;
     }
 
@@ -1169,11 +1377,9 @@ class App {
       const teamObj = teams.find(t => t.id === item.team);
       const flag = teamObj ? teamObj.flag : '';
       const teamName = teamObj ? teamObj.name : item.team;
-      let medal = '';
+      let rankText = '';
       if (!query) {
-        if (index === 0) medal = '🥇 ';
-        else if (index === 1) medal = '🥈 ';
-        else if (index === 2) medal = '🥉 ';
+        rankText = `<span class="rank-number">${index + 1}.</span> `;
       }
       const countLabel = isScorers
         ? `${item.count} ${item.count === 1 ? 'gol' : 'goles'}`
@@ -1181,13 +1387,127 @@ class App {
       return `
         <div class="stats-item bounce-in" style="animation-delay: ${index * 40}ms">
           <div class="stats-player-info">
-            <span class="stats-player-name">${medal}${item.player}</span>
+            <span class="stats-player-name">${rankText}${item.player}</span>
             <span class="stats-player-team">${flag ? `<img src="${flag}" class="flag-img" alt="${teamName}">` : ''} ${teamName}</span>
           </div>
           <span class="stats-count">${countLabel}</span>
         </div>
       `;
     }).join('');
+  }
+
+  /**
+   * Inicializa los modales con información detallada de los estadios
+   */
+  initStadiumModals() {
+    const STADIUM_DETAILS = {
+      'Estadio Azteca': {
+        capacity: '87,523',
+        location: 'Ciudad de México, México',
+        matches: 'Partido Inaugural, Fase de Grupos, Dieciseisavos, Octavos',
+        badge: 'México',
+        badgeClass: 'Mexico',
+        img: './src/assets/stadiums/stadium_azteca.png',
+        mapsUrl: 'https://maps.google.com/?q=Estadio+Azteca+CDMX',
+        how: 'Puedes llegar fácilmente tomando la <strong>Línea 2 del Metro</strong> hasta la estación terminal Taxqueña, y de ahí conectar con el <strong>Tren Ligero</strong> bajándote en la estación Estadio Azteca. También hay múltiples rutas de microbuses y acceso directo por Calzada de Tlalpan.',
+        history: 'El coloso de Santa Úrsula es uno de los templos más sagrados del fútbol mundial. Es el único estadio en la historia en albergar tres partidos inaugurales de Copas del Mundo (1970, 1986 y ahora 2026). Fue el escenario de la consagración de Pelé en 1970 y del inolvidable gol del siglo de Diego Maradona contra Inglaterra en 1986.'
+      },
+      'MetLife Stadium': {
+        capacity: '82,500',
+        location: 'Nueva York / Nueva Jersey, EE.UU.',
+        matches: 'Gran Final del Mundial, Fase de Grupos, Eliminatorias',
+        badge: 'EE.UU.',
+        badgeClass: 'USA',
+        img: './src/assets/stadiums/stadium_metlife.png',
+        mapsUrl: 'https://maps.google.com/?q=MetLife+Stadium+NJ',
+        how: 'Durante el mundial, se habilitará el servicio de tren de <strong>NJ Transit (Meadowlands Rail Line)</strong> que conecta directamente Secaucus Junction con el estadio. También está disponible el servicio express de buses <strong>Coach USA (Ruta 351)</strong> desde Port Authority en Manhattan.',
+        history: 'Inaugurado en 2010 con un costo de 1600 millones de dólares, es el hogar de los New York Giants and New York Jets de la NFL. Ha albergado la final de la Copa América Centenario 2016 y fue seleccionado oficialmente por la FIFA para ser la gran sede de la Gran Final de la Copa del Mundo el 19 de julio de 2026.'
+      },
+      'SoFi Stadium': {
+        capacity: '70,240',
+        location: 'Los Ángeles, California, EE.UU.',
+        matches: 'Debut de EE.UU., Fase de Grupos, Octavos, Cuartos de Final',
+        badge: 'EE.UU.',
+        badgeClass: 'USA',
+        img: './src/assets/stadiums/stadium_sofi.png',
+        mapsUrl: 'https://maps.google.com/?q=SoFi+Stadium+Los+Angeles',
+        how: 'Se puede tomar la <strong>Línea C del Metro (Green Line)</strong> hasta la estación Hawthorne/Lennox, desde donde opera un servicio de shuttle gratuito los días de partido directo al estadio. En auto se accede por la Interestatal 405 (Diego Freeway).',
+        history: 'Es el recinto deportivo más costoso del planeta, con una inversión superior a los 5000 millones de dólares. Cuenta con una pantalla LED gigante de doble cara de 360 grados llamada Oculus y un techo translúcido futurista. Albergó el Super Bowl LVI en 2022 y será pieza clave del mundial y de los Juegos Olímpicos de 2028.'
+      }
+    };
+
+    const modal = document.getElementById('stadium-modal');
+    const closeBtn = document.getElementById('stadium-modal-close');
+    if (!modal || !closeBtn) return;
+
+    // Cargar información al hacer clic en las tarjetas de estadios
+    document.querySelectorAll('.stadium-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Evitar abrir el modal si se hace clic en el enlace de Google Maps
+        if (e.target.closest('.stadium-map-link')) {
+          return;
+        }
+
+        const titleEl = card.querySelector('h3');
+        if (!titleEl) return;
+        const name = titleEl.textContent.trim();
+        const details = STADIUM_DETAILS[name];
+        if (!details) return;
+
+        document.getElementById('stadium-modal-title').textContent = name;
+        document.getElementById('stadium-modal-img').src = details.img;
+        document.getElementById('stadium-modal-img').alt = name;
+        
+        const badgeEl = document.getElementById('stadium-modal-badge');
+        badgeEl.textContent = details.badge;
+        badgeEl.className = `stadium-badge ${details.badgeClass}`;
+
+        document.getElementById('stadium-modal-capacity').textContent = details.capacity;
+        document.getElementById('stadium-modal-location').textContent = details.location;
+        document.getElementById('stadium-modal-matches').textContent = details.matches;
+        
+        // Incluir botón de Google Maps en el contenido de cómo llegar con un icono SVG premium
+        document.getElementById('stadium-modal-how-text').innerHTML = `
+          <p style="margin-bottom: 1.2rem;">${details.how}</p>
+          <a href="${details.mapsUrl}" target="_blank" class="btn btn-primary shimmer-hover" style="display: inline-flex; width: auto; font-size: 0.78rem; padding: 0.55rem 1.1rem; text-decoration: none; align-items: center; justify-content: center; font-weight: 600; border-radius: var(--r-sm); gap: 0.4rem; color: #fff;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="map-pin-icon-modal"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Ver ubicación en Google Maps
+          </a>
+        `;
+        document.getElementById('stadium-modal-history-text').innerHTML = details.history;
+
+        // Resetear tabs del modal
+        modal.querySelectorAll('.stadium-tab').forEach(t => t.classList.remove('active'));
+        modal.querySelectorAll('.stadium-tab-content').forEach(c => c.classList.remove('active'));
+        
+        const firstTab = modal.querySelector('.stadium-tab[data-tab="stadium-how"]');
+        const firstContent = document.getElementById('stadium-how');
+        if (firstTab) firstTab.classList.add('active');
+        if (firstContent) firstContent.classList.add('active');
+
+        // Mostrar modal
+        modal.classList.add('active');
+      });
+    });
+
+    const closeModal = () => modal.classList.remove('active');
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Swapping tabs
+    modal.querySelectorAll('.stadium-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        modal.querySelectorAll('.stadium-tab').forEach(t => t.classList.remove('active'));
+        modal.querySelectorAll('.stadium-tab-content').forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const contentId = tab.getAttribute('data-tab');
+        const contentEl = document.getElementById(contentId);
+        if (contentEl) contentEl.classList.add('active');
+      });
+    });
   }
 }
 

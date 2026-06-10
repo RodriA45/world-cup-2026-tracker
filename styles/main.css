@@ -184,10 +184,13 @@ header {
 }
 
 .logo-container { display: flex; align-items: center; gap: 0.75rem; }
-.logo-icon { font-size: 1.75rem; animation: spin-slow 12s linear infinite; }
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.logo-icon {
+  width: 10px;
+  height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+  flex-shrink: 0;
 }
 
 h1 {
@@ -1026,7 +1029,7 @@ body.light-theme .toast {
   display: flex; align-items: center; justify-content: center;
 }
 .fab-trigger:hover { transform: scale(1.06); background: #f59e0b; }
-.mobile-fab.active .fab-trigger { transform: rotate(135deg); background: var(--red); }
+.mobile-fab.active .fab-trigger { transform: rotate(135deg); background: var(--red); color: #ffffff; }
 
 .fab-menu {
   position: absolute; bottom: 62px; right: 0;
@@ -1772,7 +1775,7 @@ html { overflow-x: hidden; }
 }
 
 /* ==========================================================================
-   💡 SECCIÓN HERO - DISEÑO PREMIUM DE LA CANCHA & CONTADORES
+   SECCIÓN HERO - DISEÑO PREMIUM DE LA CANCHA & CONTADORES
    ========================================================================== */
 .hero-section {
   position: relative;
@@ -1781,14 +1784,16 @@ html { overflow-x: hidden; }
   align-items: center;
   justify-content: center;
   padding: 6rem 2rem 8rem;
-  background: radial-gradient(circle at 50% 30%, rgba(14, 39, 23, 0.9) 0%, rgba(7, 18, 12, 0.98) 70%, #030805 100%);
+  background: linear-gradient(to bottom, rgba(7, 18, 12, 0.85), rgba(3, 8, 5, 0.96)), 
+              url('../src/assets/stadiums/hero_bg.png') no-repeat center center/cover;
   overflow: hidden;
   z-index: 5;
   border-bottom: 1px solid rgba(34, 197, 94, 0.1);
 }
 
 body.light-theme .hero-section {
-  background: radial-gradient(circle at 50% 30%, rgba(220, 252, 231, 0.8) 0%, rgba(240, 253, 244, 0.95) 75%, #f0fdf4 100%);
+  background: linear-gradient(to bottom, rgba(240, 253, 244, 0.9), rgba(220, 252, 231, 0.95)),
+              url('../src/assets/stadiums/hero_bg.png') no-repeat center center/cover;
   border-bottom-color: rgba(34, 197, 94, 0.15);
 }
 
@@ -1883,17 +1888,17 @@ body.light-theme .pitch-penalty-box { border-color: rgba(34, 197, 94, 0.12); }
   font-size: clamp(2.3rem, 5vw, 4.2rem);
   font-weight: 900;
   letter-spacing: -1px;
-  background: linear-gradient(135deg, #ffffff 20%, #a7f3d0 60%, #22c55e 100%);
+  background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 75%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.05;
   margin-bottom: 1rem;
   text-transform: uppercase;
-  text-shadow: 0 0 50px rgba(34, 197, 94, 0.15);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
   font-family: var(--font);
 }
 body.light-theme .hero-title {
-  background: linear-gradient(135deg, #0f172a 20%, #15803d 70%, #166534 100%);
+  background: linear-gradient(135deg, #0f172a 30%, #334155 70%, #475569 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1909,33 +1914,33 @@ body.light-theme .hero-title {
 
 /* Estilo para los Contadores */
 .countdown-widget {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--r-lg);
   padding: 1.25rem 1.5rem;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   margin-bottom: 2.5rem;
 }
 body.light-theme .countdown-widget {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(34, 197, 94, 0.15);
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.06);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .countdown-widget h3 {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-3);
+  color: var(--text-2);
   margin-bottom: 0.875rem;
 }
 body.light-theme .countdown-widget h3 {
-  color: #166534;
+  color: var(--text-2);
 }
 
 .countdown-timer {
@@ -1956,12 +1961,12 @@ body.light-theme .countdown-widget h3 {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 800;
   font-family: monospace, var(--font);
-  color: #22c55e;
+  color: #ffffff;
   line-height: 1;
-  text-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 body.light-theme .timer-number {
-  color: #16a34a;
+  color: var(--text-1);
   text-shadow: none;
 }
 
@@ -1977,12 +1982,12 @@ body.light-theme .timer-number {
 .font-separator {
   font-size: 1.8rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.15);
+  color: var(--text-3);
   padding-bottom: 12px;
   align-self: center;
 }
 body.light-theme .font-separator {
-  color: rgba(0, 0, 0, 0.15);
+  color: var(--text-3);
 }
 
 .hero-actions {
@@ -1992,7 +1997,7 @@ body.light-theme .font-separator {
 }
 
 .btn-hero {
-  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: #fff;
   font-size: 0.92rem;
   font-weight: 700;
@@ -2001,11 +2006,11 @@ body.light-theme .font-separator {
   border: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
 }
 .btn-hero:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
 .btn-hero-secondary {
@@ -2158,11 +2163,11 @@ body.light-theme .arg-countdown {
 
 .countdown-timer.compact .timer-number {
   font-size: 1.35rem;
-  color: #60a5fa;
-  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 body.light-theme .countdown-timer.compact .timer-number {
-  color: #2563eb;
+  color: var(--text-1);
   text-shadow: none;
 }
 .countdown-timer.compact .timer-label {
@@ -2214,7 +2219,7 @@ body.light-theme .countdown-timer.compact .timer-number {
 }
 
 /* ==========================================================================
-   🏟️ SECCIÓN SEDES / ESTADIOS
+   SECCIÓN SEDES / ESTADIOS
    ========================================================================== */
 .stadiums-section {
   background: #060c08;
@@ -2326,11 +2331,37 @@ body.light-theme .stadium-card:hover {
 .stadium-location {
   font-size: 0.78rem;
   font-weight: 700;
-  color: #22c55e;
+  color: var(--gold);
   margin-bottom: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 body.light-theme .stadium-location {
-  color: #166534;
+  color: var(--gold);
+}
+
+.stadium-map-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+  transition: var(--t);
+  padding: 2px;
+  border-radius: 4px;
+}
+.stadium-map-link:hover {
+  color: var(--blue);
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateY(-1px);
+}
+body.light-theme .stadium-map-link:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+.map-pin-icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5px;
 }
 
 .stadium-desc {
@@ -2444,5 +2475,586 @@ body.light-theme .stadium-location {
   .stadium-img-wrapper {
     height: 180px;
   }
+}
+
+/* ==========================================
+   PANTALLA DE INTRODUCCIÓN (SPLASH SCREEN)
+   ========================================== */
+.app-intro-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #070d19;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s;
+  opacity: 1;
+  visibility: visible;
+}
+
+.app-intro-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.intro-content {
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+  animation: intro-zoom-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.intro-logo {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.5rem;
+  filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.35));
+}
+
+.intro-logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.intro-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text-1);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 40%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 2rem;
+}
+
+.intro-loading-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.intro-progress {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  border-radius: 2px;
+  animation: intro-load 1.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  box-shadow: 0 0 8px var(--gold);
+}
+
+@keyframes intro-load {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes intro-zoom-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Evitar scroll mientras carga */
+body.intro-active {
+  overflow: hidden !important;
+}
+
+
+/* ==========================================
+   REPRODUCTOR DE MÚSICA FLOTANTE
+   ========================================== */
+.music-player-widget {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 90;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  box-shadow: var(--shadow-lg), 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+/* Colapsado */
+.music-player-widget.collapsed {
+  width: 60px;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.music-player-widget.collapsed:hover {
+  transform: translateY(-2px);
+  border-color: rgba(251, 191, 36, 0.3);
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
+}
+
+/* Expandido */
+.music-player-widget.expanded {
+  width: 320px;
+  padding: 0 0.75rem 0 0.5rem;
+}
+
+.player-toggle-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.player-toggle-btn:active {
+  transform: scale(0.9);
+}
+
+.music-player-widget.expanded .player-toggle-btn {
+  display: none;
+}
+
+.player-expanded-container {
+  display: none;
+  align-items: center;
+  width: 100%;
+}
+
+.music-player-widget.expanded .player-expanded-container {
+  display: flex;
+}
+
+/* Disco Vinilo */
+.player-disc-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  margin-right: 0.65rem;
+  position: relative;
+}
+
+.player-vinyl-disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #222 30%, #111 60%, #000 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  animation: vinyl-spin 5s linear infinite;
+  animation-play-state: paused;
+}
+
+.player-vinyl-disc.playing {
+  animation-play-state: running;
+}
+
+.vinyl-center {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid #000;
+}
+
+@keyframes vinyl-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Info Pista */
+.player-info-wrap {
+  flex-grow: 1;
+  min-width: 0;
+  margin-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-track-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.player-track-artist {
+  font-size: 0.65rem;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+/* Barra Progreso */
+.player-progress-wrap {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.player-progress-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* Controles */
+.player-controls-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-right: 0.35rem;
+  flex-shrink: 0;
+}
+
+.player-control-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s ease;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
+.player-control-btn:hover {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+
+.player-control-btn:active {
+  transform: scale(0.9);
+}
+
+.player-control-btn.play-btn::before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent currentColor;
+  margin-left: 2px;
+}
+
+.player-control-btn.play-btn.playing::before {
+  content: '';
+  border: none;
+  width: 8px;
+  height: 10px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+  margin-left: 0;
+}
+
+.player-control-btn.next-btn::before {
+  content: '≫';
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.player-control-btn.mute-btn::before {
+  content: '🔊';
+  font-size: 0.85rem;
+}
+
+.player-control-btn.mute-btn.muted::before {
+  content: '🔇';
+}
+
+.player-collapse-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.player-collapse-btn:hover {
+  color: var(--red);
+}
+
+
+/* ==========================================
+   MODAL DE DETALLES DE ESTADIO
+   ========================================== */
+.stadium-modal-content {
+  max-width: 580px !important;
+  width: 92%;
+  padding: 0 !important;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.stadium-modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.stadium-modal-hero {
+  position: relative;
+  height: 240px;
+  background: #000;
+}
+
+.stadium-modal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+}
+
+.stadium-modal-hero .stadium-badge {
+  top: 1.25rem;
+  right: 1.25rem;
+}
+
+.stadium-modal-details {
+  padding: 1.75rem;
+}
+
+.stadium-modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: var(--r-md);
+  text-align: center;
+}
+body.light-theme .stadium-modal-info-grid {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.stadium-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stadium-info-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.stadium-info-lbl {
+  font-size: 0.65rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.stadium-modal-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.stadium-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-2);
+  padding: 0.5rem 0.25rem 0.65rem;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--t);
+}
+
+.stadium-tab:hover {
+  color: var(--text-1);
+}
+
+.stadium-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.stadium-tab-content {
+  display: none;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  line-height: 1.6;
+  min-height: 90px;
+}
+
+.stadium-tab-content.active {
+  display: block;
+  animation: fade-in 0.25s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* ==========================================
+   BURBUJAS DE RACHA (FORM INDICATOR)
+   ========================================== */
+.form-container-td {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0.4rem 0.25rem !important;
+}
+
+.form-bubble {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff !important;
+  user-select: none;
+}
+
+.form-bubble.win {
+  background: #15803d;
+  box-shadow: 0 1px 4px rgba(21, 128, 61, 0.3);
+}
+
+.form-bubble.draw {
+  background: #64748b;
+  box-shadow: 0 1px 4px rgba(100, 116, 139, 0.3);
+}
+
+.form-bubble.loss {
+  background: #b91c1c;
+  box-shadow: 0 1px 4px rgba(185, 28, 28, 0.3);
+}
+
+
+/* ==========================================
+   ILUMINACIÓN DE CONECTORES DEL BRACKET
+   ========================================== */
+.bracket-match-wrapper::after {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bracket-match-wrapper.active-path::after {
+  background: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+}
+
+
+/* ==========================================
+   EFECTO DE BRILLO SHIMMER
+   ========================================== */
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%;
+  width: 50%; height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: none;
+}
+
+.shimmer-hover:hover::after {
+  left: 150%;
+  transition: left 0.9s ease-in-out;
+}
+
+
+/* ==========================================
+   RANGO NUMÉRICO DE LÍDERES
+   ========================================== */
+.rank-number {
+  font-family: monospace, var(--font);
+  font-weight: 700;
+  color: var(--gold);
+  margin-right: 0.25rem;
+}
+
+
+/* ==========================================
+   ANIMACIONES DE SCROLL REVEAL
+   ========================================== */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 

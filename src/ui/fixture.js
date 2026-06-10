@@ -158,7 +158,7 @@ function renderMatches(gridContainer, matches, onEditMatch) {
     card.innerHTML = `
       <div class="match-info-top">
         <span class="match-stage-badge">Grupo ${m.group} — Fecha ${m.matchday}</span>
-        <span class="match-date">📅 ${formattedDate}</span>
+        <span class="match-date">${formattedDate}</span>
       </div>
       <div class="match-teams-row">
         <div class="match-team home-team">
@@ -177,7 +177,7 @@ function renderMatches(gridContainer, matches, onEditMatch) {
       </div>
       <div class="match-card-actions">
         <span class="played-status ${isPlayed ? 'played' : 'pending'}">
-          ${isPlayed ? '✓ Finalizado' : '⏳ Pendiente'}
+          ${isPlayed ? 'Finalizado' : 'Pendiente'}
         </span>
         <button class="edit-score-btn">
           ${isPlayed ? 'Editar Marcador' : 'Cargar Marcador'}
