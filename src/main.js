@@ -18,25 +18,26 @@ class MusicPlayer {
       {
         title: 'Waka Waka (Esto es África)',
         artist: 'Shakira',
-        youtubeId: 'pEnBGECedp4'
+        url: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3'
       },
       {
         title: "Feet Don't Fail Me",
         artist: 'Joy Crookes',
-        youtubeId: 'w2mB5m3xW2A'
+        url: 'https://archive.org/download/joy-crookes-feet-dont-fail-me/Joy%20Crookes%20-%20Feet%20Don%27t%20Fail%20Me.mp3'
       },
       {
         title: "Wavin' Flag",
         artist: "K'Naan",
-        youtubeId: 'ampu9_RKUQQ'
+        url: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3'
       }
     ];
     this.currentIndex = 0;
-    this.isPlaying = false;
-    this.isMuted = false;
-    this.ytPlayer = null;
-    this.ytReady = false;
-    this._progressInterval = null;
+    this.isPlaying    = false;
+    this.isMuted      = false;
+
+    this.audio = new Audio();
+    this.audio.volume  = 0.4;
+    this.audio.preload = 'none'; // no precargar hasta que el usuario dé play
 
     this.widget      = document.getElementById('music-player-widget');
     this.toggleBtn   = document.getElementById('player-toggle-btn');
@@ -54,180 +55,112 @@ class MusicPlayer {
   init() {
     if (!this.widget) return;
 
-    // Mostrar pista actual desde el inicio
-    this.updateTrackInfo();
+    // Mostrar la primera pista
+    this._updateInfo();
 
-    // ── Crear el div oculto que YouTube reemplazará con su iframe ──
-    const ytContainer = document.createElement('div');
-    ytContainer.id    = 'yt-player-hidden';
-    ytContainer.style.cssText =
-      'position:fixed;left:-9999px;top:-9999px;width:320px;height:180px;' +
-      'overflow:hidden;pointer-events:none;opacity:0;';
-    document.body.appendChild(ytContainer);
+    // Si la canción de Joy Crookes falla (URL no disponible), saltar a la siguiente
+    this.audio.addEventListener('error', () => {
+      console.warn('[MusicPlayer] Error cargando pista, saltando a la siguiente...');
+      this.nextTrack();
+    });
 
-    const ytDiv = document.createElement('div');
-    ytDiv.id = 'yt-iframe';
-    ytContainer.appendChild(ytDiv);
+    // Eventos del audio
+    this.audio.addEventListener('timeupdate', () => this._updateProgress());
+    this.audio.addEventListener('ended',      () => this.nextTrack());
 
-    // ── Función que instancia el player de YouTube ──
-    const createPlayer = () => {
-      this.ytPlayer = new window.YT.Player('yt-iframe', {
-        videoId: this.playlist[0].youtubeId,
-        playerVars: {
-          autoplay:        0,
-          controls:        0,
-          disablekb:       1,
-          fs:              0,
-          iv_load_policy:  3,
-          modestbranding:  1,
-          rel:             0,
-          enablejsapi:     1,
-          origin:          window.location.origin
-        },
-        events: {
-          onReady: () => {
-            this.ytReady = true;
-            this.ytPlayer.setVolume(40);
-            // Quitar indicador "cargando" si lo hay
-            if (this.playBtn) this.playBtn.classList.remove('loading');
-            console.log('[MusicPlayer] YouTube API lista ✓');
-          },
-          onStateChange: (evt) => {
-            const S = window.YT.PlayerState;
-            if (evt.data === S.ENDED)  { this.nextTrack(); return; }
-            if (evt.data === S.PLAYING){ this.isPlaying = true;  this.updateUI(); this._startProgressPoll(); }
-            if (evt.data === S.PAUSED) { this.isPlaying = false; this.updateUI(); this._stopProgressPoll();  }
-          },
-          onError: (evt) => {
-            console.warn('[MusicPlayer] Error YouTube:', evt.data);
-            // Avanzar a la siguiente canción si hay error de reproducción
-            this.nextTrack();
-          }
-        }
-      });
-    };
-
-    // ── Registrar el callback GLOBAL antes de cargar el script ──
-    // Esta es la clave: YouTube llama a window.onYouTubeIframeAPIReady
-    // cuando la API termina de cargarse.
-    if (window.YT && window.YT.Player) {
-      // La API ya estaba cargada (recarga de HMR / Vite)
-      createPlayer();
-    } else {
-      // Registrar el callback ANTES de appendear el script
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        if (typeof prev === 'function') prev();
-        createPlayer();
-      };
-      // Verificar que no esté ya cargando el script
-      if (!document.getElementById('yt-api-script')) {
-        const tag  = document.createElement('script');
-        tag.id     = 'yt-api-script';
-        tag.src    = 'https://www.youtube.com/iframe_api';
-        tag.async  = true;
-        // Insertar antes del primer script existente (recomendado por YouTube)
-        const first = document.getElementsByTagName('script')[0];
-        first.parentNode.insertBefore(tag, first);
-      }
-    }
-
-    // ── Bindings de los controles de UI ──
+    // Controles
     this.toggleBtn.addEventListener('click',   (e) => { e.stopPropagation(); this.expand(); });
     this.collapseBtn.addEventListener('click', (e) => { e.stopPropagation(); this.collapse(); });
     this.widget.addEventListener('click', () => {
       if (this.widget.classList.contains('collapsed')) this.expand();
     });
-    this.playBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!this.ytReady) {
-        console.warn('[MusicPlayer] YouTube todavía cargando, espera un momento...');
-        return;
-      }
-      this.togglePlay();
-    });
-    this.nextBtn.addEventListener('click',  (e) => { e.stopPropagation(); this.nextTrack(); });
-    this.muteBtn.addEventListener('click',  (e) => { e.stopPropagation(); this.toggleMute(); });
+    this.playBtn.addEventListener('click', (e) => { e.stopPropagation(); this.togglePlay(); });
+    this.nextBtn.addEventListener('click', (e) => { e.stopPropagation(); this.nextTrack(); });
+    this.muteBtn.addEventListener('click', (e) => { e.stopPropagation(); this.toggleMute(); });
 
     this.progressWrap.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!this.ytReady || !this.ytPlayer) return;
-      const rect = this.progressWrap.getBoundingClientRect();
-      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      const dur  = this.ytPlayer.getDuration();
-      if (dur > 0) this.ytPlayer.seekTo(pct * dur, true);
+      const rect    = this.progressWrap.getBoundingClientRect();
+      const pct     = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (this.audio.duration) this.audio.currentTime = pct * this.audio.duration;
     });
   }
 
-  /* ── helpers internos ── */
-  _startProgressPoll() {
-    this._stopProgressPoll();
-    this._progressInterval = setInterval(() => {
-      if (!this.ytReady || !this.ytPlayer) return;
-      try {
-        const dur = this.ytPlayer.getDuration();
-        const cur = this.ytPlayer.getCurrentTime();
-        if (dur > 0) this.progressBar.style.width = `${(cur / dur) * 100}%`;
-      } catch (_) { /* ignorar si el player no está listo */ }
-    }, 500);
-  }
-
-  _stopProgressPoll() {
-    if (this._progressInterval) {
-      clearInterval(this._progressInterval);
-      this._progressInterval = null;
-    }
-  }
-
-  /* ── API pública ── */
-  updateTrackInfo() {
+  /* ── privados ── */
+  _updateInfo() {
     const t = this.playlist[this.currentIndex];
     this.trackTitle.textContent  = t.title;
     this.trackArtist.textContent = t.artist;
     this.progressBar.style.width = '0%';
   }
 
-  loadTrack(index) {
-    this.currentIndex = index;
-    this.updateTrackInfo();
-    if (!this.ytReady || !this.ytPlayer) return;
-    const id = this.playlist[index].youtubeId;
-    if (this.isPlaying) {
-      this.ytPlayer.loadVideoById(id);
-    } else {
-      this.ytPlayer.cueVideoById(id);
+  _updateProgress() {
+    if (this.audio.duration) {
+      const pct = (this.audio.currentTime / this.audio.duration) * 100;
+      this.progressBar.style.width = `${pct}%`;
     }
   }
 
-  expand()  { this.widget.classList.replace('collapsed', 'expanded') || this.widget.classList.add('expanded'); }
-  collapse(){ this.widget.classList.replace('expanded',  'collapsed')|| this.widget.classList.add('collapsed');}
+  _updateUI() {
+    this.playBtn.classList.toggle('playing', this.isPlaying);
+    this.vinylDisc.classList.toggle('playing', this.isPlaying);
+  }
+
+  /* ── API pública ── */
+  expand()  {
+    this.widget.classList.remove('collapsed');
+    this.widget.classList.add('expanded');
+  }
+
+  collapse() {
+    this.widget.classList.remove('expanded');
+    this.widget.classList.add('collapsed');
+  }
+
+  loadTrack(index) {
+    this.currentIndex = index;
+    this.audio.src = this.playlist[index].url;
+    this.audio.load();
+    this._updateInfo();
+    this._updateUI();
+  }
 
   togglePlay() {
-    if (!this.ytReady || !this.ytPlayer) return;
     if (this.isPlaying) {
-      this.ytPlayer.pauseVideo();
+      this.audio.pause();
+      this.isPlaying = false;
+      this._updateUI();
     } else {
-      this.ytPlayer.playVideo();
+      // Si no hay src cargado aún, cargarlo
+      if (!this.audio.src) {
+        this.audio.src = this.playlist[this.currentIndex].url;
+      }
+      this.audio.play()
+        .then(() => {
+          this.isPlaying = true;
+          this._updateUI();
+        })
+        .catch(err => {
+          console.warn('[MusicPlayer] Play falló:', err.message);
+        });
     }
   }
 
   nextTrack() {
-    const was = this.isPlaying;
+    const wasPlaying  = this.isPlaying;
     this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
     this.loadTrack(this.currentIndex);
-    if (was && this.ytReady && this.ytPlayer) this.ytPlayer.playVideo();
+    if (wasPlaying) {
+      this.audio.play()
+        .then(() => { this.isPlaying = true; this._updateUI(); })
+        .catch(err => { console.warn('[MusicPlayer] Next track falló:', err.message); });
+    }
   }
 
   toggleMute() {
-    if (!this.ytReady || !this.ytPlayer) return;
-    this.isMuted = !this.isMuted;
-    if (this.isMuted) { this.ytPlayer.mute();   this.muteBtn.classList.add('muted'); }
-    else              { this.ytPlayer.unMute();  this.muteBtn.classList.remove('muted'); }
-  }
-
-  updateUI() {
-    this.playBtn.classList.toggle('playing', this.isPlaying);
-    this.vinylDisc.classList.toggle('playing', this.isPlaying);
+    this.isMuted      = !this.isMuted;
+    this.audio.muted  = this.isMuted;
+    this.muteBtn.classList.toggle('muted', this.isMuted);
   }
 }
 
