@@ -14,26 +14,32 @@ const LOCAL_STORAGE_KEY = 'tfi_mundial_2026_state';
 // Clase del reproductor de música flotante
 class MusicPlayer {
   constructor() {
+    // Playlist usando YouTube IFrame API (solo audio, iframe oculto)
+    // YouTube IDs oficiales de cada canción
     this.playlist = [
       {
         title: 'Waka Waka (Esto es África)',
         artist: 'Shakira',
-        url: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3'
+        youtubeId: 'pEnBGECedp4'   // Video oficial Shakira VEVO — versión en español
+      },
+      {
+        title: "Feet Don't Fail Me",
+        artist: 'Joy Crookes',
+        youtubeId: 'w2mB5m3xW2A'   // Video oficial Joy Crookes
       },
       {
         title: "Wavin' Flag",
         artist: "K'Naan",
-        url: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3'
+        youtubeId: 'ampu9_RKUQQ'   // Versión oficial K'Naan
       }
     ];
     this.currentIndex = 0;
     this.isPlaying = false;
     this.isMuted = false;
-    
-    this.audio = new Audio();
-    this.audio.volume = 0.4;
-    this.audio.preload = 'metadata';
-    
+    this.ytPlayer = null;
+    this.ytReady = false;
+    this._progressInterval = null;
+
     this.widget = document.getElementById('music-player-widget');
     this.toggleBtn = document.getElementById('player-toggle-btn');
     this.collapseBtn = document.getElementById('player-collapse-btn');
@@ -46,123 +52,184 @@ class MusicPlayer {
     this.progressWrap = document.getElementById('player-progress-wrap');
     this.vinylDisc = document.getElementById('player-vinyl-disc');
   }
-  
+
   init() {
     if (!this.widget) return;
-    
-    this.loadTrack(this.currentIndex);
-    
-    this.toggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.expand();
-    });
-    this.collapseBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.collapse();
-    });
-    
+
+    // Crear contenedor oculto para el iframe de YouTube
+    const ytContainer = document.createElement('div');
+    ytContainer.id = 'yt-player-hidden';
+    ytContainer.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;';
+    document.body.appendChild(ytContainer);
+
+    // Crear el elemento div que YouTube reemplazará con un iframe
+    const ytDiv = document.createElement('div');
+    ytDiv.id = 'yt-iframe';
+    ytContainer.appendChild(ytDiv);
+
+    // Cargar la API de YouTube si no está ya cargada
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+
+    // Callback que YouTube llama cuando la API está lista
+    const initPlayer = () => {
+      this.ytPlayer = new YT.Player('yt-iframe', {
+        height: '1',
+        width: '1',
+        videoId: this.playlist[this.currentIndex].youtubeId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          iv_load_policy: 3,
+          modestbranding: 1,
+          rel: 0
+        },
+        events: {
+          onReady: () => {
+            this.ytReady = true;
+            this.ytPlayer.setVolume(40);
+            this.updateTrackInfo();
+          },
+          onStateChange: (event) => {
+            // YT.PlayerState.ENDED = 0
+            if (event.data === 0) {
+              this.nextTrack();
+            }
+            // YT.PlayerState.PLAYING = 1
+            if (event.data === 1) {
+              this.isPlaying = true;
+              this.updateUI();
+              this._startProgressPoll();
+            }
+            // YT.PlayerState.PAUSED = 2
+            if (event.data === 2) {
+              this.isPlaying = false;
+              this.updateUI();
+              this._stopProgressPoll();
+            }
+          }
+        }
+      });
+    };
+
+    if (window.YT && window.YT.Player) {
+      initPlayer();
+    } else {
+      // La API llama a esta función global cuando está lista
+      const prevCallback = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (prevCallback) prevCallback();
+        initPlayer();
+      };
+    }
+
+    // Bindings de UI
+    this.toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); this.expand(); });
+    this.collapseBtn.addEventListener('click', (e) => { e.stopPropagation(); this.collapse(); });
     this.widget.addEventListener('click', () => {
-      if (this.widget.classList.contains('collapsed')) {
-        this.expand();
-      }
+      if (this.widget.classList.contains('collapsed')) this.expand();
     });
-    
-    this.playBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.togglePlay();
-    });
-    
-    this.nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.nextTrack();
-    });
-    
-    this.muteBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.toggleMute();
-    });
-    
+    this.playBtn.addEventListener('click', (e) => { e.stopPropagation(); this.togglePlay(); });
+    this.nextBtn.addEventListener('click', (e) => { e.stopPropagation(); this.nextTrack(); });
+    this.muteBtn.addEventListener('click', (e) => { e.stopPropagation(); this.toggleMute(); });
+
+    // Clic en barra de progreso para buscar posición
     this.progressWrap.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (!this.ytReady || !this.ytPlayer) return;
       const rect = this.progressWrap.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const percent = clickX / rect.width;
-      if (this.audio.duration) {
-        this.audio.currentTime = percent * this.audio.duration;
-      }
+      const pct = (e.clientX - rect.left) / rect.width;
+      const duration = this.ytPlayer.getDuration();
+      if (duration) this.ytPlayer.seekTo(pct * duration, true);
     });
-    
-    this.audio.addEventListener('timeupdate', () => this.updateProgress());
-    this.audio.addEventListener('ended', () => this.nextTrack());
+
+    this.updateTrackInfo();
   }
-  
-  loadTrack(index) {
-    const track = this.playlist[index];
-    this.audio.src = track.url;
-    this.audio.load();
+
+  _startProgressPoll() {
+    this._stopProgressPoll();
+    this._progressInterval = setInterval(() => {
+      if (!this.ytReady || !this.ytPlayer || !this.ytPlayer.getDuration) return;
+      const duration = this.ytPlayer.getDuration();
+      const current = this.ytPlayer.getCurrentTime();
+      if (duration > 0) {
+        this.progressBar.style.width = `${(current / duration) * 100}%`;
+      }
+    }, 500);
+  }
+
+  _stopProgressPoll() {
+    if (this._progressInterval) {
+      clearInterval(this._progressInterval);
+      this._progressInterval = null;
+    }
+  }
+
+  updateTrackInfo() {
+    const track = this.playlist[this.currentIndex];
     this.trackTitle.textContent = track.title;
     this.trackArtist.textContent = track.artist;
     this.progressBar.style.width = '0%';
-    this.updateUI();
   }
-  
+
+  loadTrack(index) {
+    this.currentIndex = index;
+    const track = this.playlist[index];
+    this.updateTrackInfo();
+    if (this.ytReady && this.ytPlayer) {
+      if (this.isPlaying) {
+        this.ytPlayer.loadVideoById(track.youtubeId);
+      } else {
+        this.ytPlayer.cueVideoById(track.youtubeId);
+      }
+    }
+  }
+
   expand() {
     this.widget.classList.remove('collapsed');
     this.widget.classList.add('expanded');
   }
-  
+
   collapse() {
     this.widget.classList.remove('expanded');
     this.widget.classList.add('collapsed');
   }
-  
+
   togglePlay() {
+    if (!this.ytReady || !this.ytPlayer) return;
     if (this.isPlaying) {
-      this.audio.pause();
-      this.isPlaying = false;
+      this.ytPlayer.pauseVideo();
     } else {
-      this.audio.play().then(() => {
-        this.isPlaying = true;
-        this.updateUI();
-      }).catch(err => {
-        console.warn("Playback failed, user interaction required: ", err);
-      });
+      this.ytPlayer.playVideo();
     }
-    this.updateUI();
   }
-  
+
   nextTrack() {
+    const wasPlaying = this.isPlaying;
     this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
     this.loadTrack(this.currentIndex);
-    if (this.isPlaying) {
-      this.audio.play().then(() => {
-        this.isPlaying = true;
-        this.updateUI();
-      }).catch(err => {
-        console.warn("Next track play failed: ", err);
-        this.isPlaying = false;
-        this.updateUI();
-      });
+    if (wasPlaying && this.ytReady && this.ytPlayer) {
+      this.ytPlayer.playVideo();
     }
   }
-  
+
   toggleMute() {
+    if (!this.ytReady || !this.ytPlayer) return;
     this.isMuted = !this.isMuted;
-    this.audio.muted = this.isMuted;
     if (this.isMuted) {
+      this.ytPlayer.mute();
       this.muteBtn.classList.add('muted');
     } else {
+      this.ytPlayer.unMute();
       this.muteBtn.classList.remove('muted');
     }
   }
-  
-  updateProgress() {
-    if (this.audio.duration) {
-      const pct = (this.audio.currentTime / this.audio.duration) * 100;
-      this.progressBar.style.width = `${pct}%`;
-    }
-  }
-  
+
   updateUI() {
     if (this.isPlaying) {
       this.playBtn.classList.add('playing');
