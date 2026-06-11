@@ -18,12 +18,17 @@ class MusicPlayer {
       {
         title: 'Waka Waka (Esto es África)',
         artist: 'Shakira',
-        url: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3'
+        url: 'https://people.csail.mit.edu/karger/J/Collect/Waka%20Waka%20(Esto%20es%20Africa).mp3'
       },
       {
-        title: "Feet Don't Fail Me",
-        artist: 'Joy Crookes',
-        url: 'https://archive.org/download/joy-crookes-feet-dont-fail-me/Joy%20Crookes%20-%20Feet%20Don%27t%20Fail%20Me.mp3'
+        title: 'Balada (Tchê Tcherere Tchê Tchê)',
+        artist: 'Gusttavo Lima',
+        url: 'https://archive.org/download/2012-various-artists-the-dome-summer-2012/220_gusttavo_lima_-_balada_%28tche_techerere_teche_tcech%29_%28a-class_special_radio_mix%29.mp3'
+      },
+      {
+        title: 'Ai Se Eu Te Pego',
+        artist: 'Michel Teló',
+        url: 'https://archive.org/download/2012-various-artists-the-dome-summer-2012/222_michel_telo_-_ai_se_eu_pego.mp3'
       },
       {
         title: "Wavin' Flag",
